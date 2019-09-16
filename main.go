@@ -39,10 +39,28 @@ var startCmd = cli.Command{
 			Value:  "80",
 			EnvVar: "PORT",
 		},
+		cli.StringFlag{
+			Name:   "ssl_cert_path",
+			Usage:  "Path to ssl certificate",
+			EnvVar: "SSL_CERT_PATH",
+		},
+		cli.StringFlag{
+			Name:   "ssl_key_path",
+			Usage:  "Path to ssl certificate key",
+			EnvVar: "SSL_KEY_PATH",
+		},
 	},
 	Action: func(ctx *cli.Context) error {
 		port := ctx.String("port")
-		if err := startServer(port); err != nil {
+		sslCertPath := ctx.String("ssl_cert_path")
+		sslKeyPath := ctx.String("ssl_key_path")
+
+		options := startServerOptions{
+			port:        port,
+			sslCertPath: sslCertPath,
+			sslKeyPath:  sslKeyPath,
+		}
+		if err := startServer(options); err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
 		return nil
@@ -68,7 +86,13 @@ func automigrate() error {
 	return db.AutoMigrate(src.Message{}).Error
 }
 
-func startServer(port string) error {
+type startServerOptions struct {
+	port        string
+	sslCertPath string
+	sslKeyPath  string
+}
+
+func startServer(opts startServerOptions) error {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
@@ -87,11 +111,15 @@ func startServer(port string) error {
 		res.Write([]byte("OK"))
 	})
 
-	h := &http.Server{Addr: ":" + port, Handler: mux}
+	h := &http.Server{Addr: ":" + opts.port, Handler: mux}
 
 	go func() {
-		log.Printf("server running on http://localhost:%s/", port)
-		log.Fatal(h.ListenAndServe())
+		log.Printf("server running on http://localhost:%s/", opts.port)
+		if opts.sslCertPath != "" && opts.sslKeyPath != "" {
+			log.Fatal(h.ListenAndServeTLS(opts.sslCertPath, opts.sslKeyPath))
+		} else {
+			log.Fatal(h.ListenAndServe())
+		}
 	}()
 
 	<-stop
