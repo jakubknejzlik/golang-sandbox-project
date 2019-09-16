@@ -13,3 +13,9 @@ For starting the application (port 8080):
 ```
 make start
 ```
+
+For running tests:
+
+```
+make test
+```

@@ -10,4 +10,5 @@ require (
 	github.com/novacloudcz/graphql-orm v0.0.0-20190912114504-1f558d910934
 	github.com/rs/cors v1.7.0
 	github.com/urfave/cli v1.22.1
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 )

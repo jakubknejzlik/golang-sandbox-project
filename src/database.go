@@ -36,10 +36,17 @@ func NewDBWithString(urlString string) *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
-	db.DB().SetMaxIdleConns(5)
-	db.DB().SetConnMaxLifetime(time.Second * 60)
-	db.DB().SetMaxOpenConns(10)
+	if urlString == "sqlite3://:memory:" {
+		db.DB().SetMaxIdleConns(1)
+		db.DB().SetConnMaxLifetime(time.Second * 300)
+		db.DB().SetMaxOpenConns(1)
+	} else {
+		db.DB().SetMaxIdleConns(5)
+		db.DB().SetConnMaxLifetime(time.Second * 60)
+		db.DB().SetMaxOpenConns(10)
+	}
 	db.LogMode(os.Getenv("DEBUG") == "true")
+
 	return db
 }
 

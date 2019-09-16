@@ -5,4 +5,4 @@ start:
 	DATABASE_URL=sqlite3://test.db PORT=8080 go run *.go start
 
 test:
-	go test ./src
+	go test -v ./src

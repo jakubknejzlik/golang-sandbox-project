@@ -17,6 +17,6 @@ func (s *MessageService) Create(m *Message) error {
 }
 
 func (s *MessageService) GetList(limit int) (ms []Message, err error) {
-	err = s.db.Find(&ms).Limit(limit).Order("ts", true).Error
+	err = s.db.Limit(limit).Find(&ms).Order("ts", true).Error
 	return
 }

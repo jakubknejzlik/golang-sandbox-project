@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -54,11 +53,11 @@ var migrateCmd = cli.Command{
 	Name:  "migrate",
 	Usage: "migrate schema database",
 	Action: func(ctx *cli.Context) error {
-		fmt.Println("starting migration")
+		log.Println("starting migration")
 		if err := automigrate(); err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		fmt.Println("migration complete")
+		log.Println("migration complete")
 		return nil
 	},
 }
