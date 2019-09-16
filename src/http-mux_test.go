@@ -116,6 +116,29 @@ func TestMux_message_creation(t *testing.T) {
 	}
 }
 
+func TestMux_invalid_message_creation(t *testing.T) {
+	db := prepareDatabase()
+	mux := GetHTTPServeMux(db)
+
+	r, err := http.NewRequest("POST", "/message", bytes.NewBuffer([]byte("invalid json")))
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	r.Header.Set("content-type", "application/json")
+
+	w := httptest.NewRecorder()
+	mux.ServeHTTP(w, r)
+
+	resp := w.Result()
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		defer resp.Body.Close()
+		body, _ := ioutil.ReadAll(resp.Body)
+		err = fmt.Errorf("Unexpected status code %d, message: %s", resp.StatusCode, string(body))
+		return
+	}
+}
+
 func TestMux_message_creation_parallel(t *testing.T) {
 	db := prepareDatabase()
 	mux := GetHTTPServeMux(db)
