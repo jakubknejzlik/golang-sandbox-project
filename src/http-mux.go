@@ -24,7 +24,7 @@ func GetHTTPServeMux(db *gorm.DB) *http.ServeMux {
 			return
 		}
 
-		err = ms.Create(&m)
+		err = ms.Create(m)
 		if err != nil {
 			sendStatus(res, false, http.StatusBadRequest)
 			return
@@ -38,7 +38,7 @@ func GetHTTPServeMux(db *gorm.DB) *http.ServeMux {
 			http.NotFound(res, req)
 			return
 		}
-		messages, err := ms.GetList(100)
+		messages, err := ms.GetList()
 		if err != nil {
 			sendUnexpectedError(res, err)
 			return

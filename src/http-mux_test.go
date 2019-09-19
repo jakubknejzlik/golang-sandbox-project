@@ -191,7 +191,7 @@ func TestMux_message_creation_parallel(t *testing.T) {
 			t.Errorf("Number of fetched messages should be %d and is %d", expectedNumberOfMessages, len(messages))
 		}
 		for i := 0; i < len(messages)-2; i++ {
-			if messages[i].Timestamp > messages[i+1].Timestamp {
+			if messages[i].Timestamp < messages[i+1].Timestamp {
 				t.Errorf("Timestamp should be ordered by timestamp %d > %d", messages[i].Timestamp, messages[i+1].Timestamp)
 			}
 		}
